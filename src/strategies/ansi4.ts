@@ -1,79 +1,43 @@
 import { ColorRange } from '../types';
 import { runStrategy } from './strategy';
 
-const ANSI_COLOR_REGEX = /\\x1[b|B]\[\d+m/ig;
-const ANSI_XTERM_REGEX = /\\x1b\[38;(\d+;)+m/ig;
-const UNICODE_ANSI_REGEX = /\\u001b\[\d+m/ig;
+const ANSI_COLOR_REGEX = /\\x1b\[(?<i>\d+)m/ig;
+const UNICODE_ANSI_REGEX = /\\u001b\[(?<i>\d+)+m/ig;
 
 const ANSI_COLOR_MAP = {
-    '\\x1b[30m': 'rgb(0, 0, 0)',
-    '\\x1b[31m': 'rgb(194,54,33)',
-    '\\x1b[32m': 'rgb(37,188,36)',
-    '\\x1b[33m': 'rgb(173,173,39)',
-    '\\x1b[34m': 'rgb(73,46,225)',
-    '\\x1b[35m': 'rgb(211,56,211)',
-    '\\x1b[36m': 'rgb(51,187,200)',
-    '\\x1b[37m': 'rgb(203,204,205)',
-    '\\x1b[90m': 'rgb(129,131,131)',
-    '\\x1b[91m': 'rgb(252,57,31)',
-    '\\x1b[92m': 'rgb(49,231,34)',
-    '\\x1b[93m': 'rgb(234,236,35)',
-    '\\x1b[94m': 'rgb(88,51,255)',
-    '\\x1b[95m': 'rgb(249,53,248)',
-    '\\x1b[96m': 'rgb(20,240,240)',
-    '\\x1b[97m': 'rgb(233,235,235)',
-    '\\x1b[40m': 'rgb(0, 0, 0)',
-    '\\x1b[41m': 'rgb(194,54,33)',
-    '\\x1b[42m': 'rgb(37,188,36)',
-    '\\x1b[43m': 'rgb(173,173,39)',
-    '\\x1b[44m': 'rgb(73,46,225)',
-    '\\x1b[45m': 'rgb(211,56,211)',
-    '\\x1b[46m': 'rgb(51,187,200)',
-    '\\x1b[47m': 'rgb(203,204,205)',
-    '\\x1b[100m': 'rgb(129,131,131)',
-    '\\x1b[101m': 'rgb(252,57,31)',
-    '\\x1b[102m': 'rgb(49,231,34)',
-    '\\x1b[103m': 'rgb(234,236,35)',
-    '\\x1b[104m': 'rgb(88,51,255)',
-    '\\x1b[105m': 'rgb(249,53,248)',
-    '\\x1b[106m': 'rgb(20,240,240)',
-    '\\x1b[107m': 'rgb(233,235,235)',
-} as Record<string | number, string>;
-
-const UNICODE_ANSI_COLOR_MAP = {
-    '\\u001b[30m': 'rgb(0, 0, 0)',
-    '\\u001b[31m': 'rgb(194,54,33)',
-    '\\u001b[32m': 'rgb(37,188,36)',
-    '\\u001b[33m': 'rgb(173,173,39)',
-    '\\u001b[34m': 'rgb(73,46,225)',
-    '\\u001b[35m': 'rgb(211,56,211)',
-    '\\u001b[36m': 'rgb(51,187,200)',
-    '\\u001b[37m': 'rgb(203,204,205)',
-    '\\u001b[90m': 'rgb(129,131,131)',
-    '\\u001b[91m': 'rgb(252,57,31)',
-    '\\u001b[92m': 'rgb(49,231,34)',
-    '\\u001b[93m': 'rgb(234,236,35)',
-    '\\u001b[94m': 'rgb(88,51,255)',
-    '\\u001b[95m': 'rgb(249,53,248)',
-    '\\u001b[96m': 'rgb(20,240,240)',
-    '\\u001b[97m': 'rgb(233,235,235)',
-    '\\u001b[40m': 'rgb(0, 0, 0)',
-    '\\u001b[41m': 'rgb(194,54,33)',
-    '\\u001b[42m': 'rgb(37,188,36)',
-    '\\u001b[43m': 'rgb(173,173,39)',
-    '\\u001b[44m': 'rgb(73,46,225)',
-    '\\u001b[45m': 'rgb(211,56,211)',
-    '\\u001b[46m': 'rgb(51,187,200)',
-    '\\u001b[47m': 'rgb(203,204,205)',
-    '\\u001b[100m': 'rgb(129,131,131)',
-    '\\u001b[101m': 'rgb(252,57,31)',
-    '\\u001b[102m': 'rgb(49,231,34)',
-    '\\u001b[103m': 'rgb(234,236,35)',
-    '\\u001b[104m': 'rgb(88,51,255)',
-    '\\u001b[105m': 'rgb(249,53,248)',
-    '\\u001b[106m': 'rgb(20,240,240)',
-    '\\u001b[107m': 'rgb(233,235,235)',
-} as Record<string | number, string>;
+    30: 'rgb(0, 0, 0)',
+    31: 'rgb(128, 0, 0)',
+    32: 'rgb(0, 128, 0)',
+    33: 'rgb(128, 128, 0)',
+    34: 'rgb(0, 0, 128)',
+    35: 'rgb(128, 0, 128)',
+    36: 'rgb(0, 128, 128)',
+    37: 'rgb(192, 192, 192)',
+    40: 'rgb(0, 0, 0)',
+    41: 'rgb(128, 0, 0)',
+    42: 'rgb(0, 128, 0)',
+    43: 'rgb(128, 128, 0)',
+    44: 'rgb(0, 0, 128)',
+    45: 'rgb(128, 0, 128)',
+    46: 'rgb(0, 128, 128)',
+    47: 'rgb(192, 192, 192)',
+    90: 'rgb(128, 128, 128)',
+    91: 'rgb(255, 0, 0)',
+    92: 'rgb(0, 255, 0)',
+    93: 'rgb(255, 255, 0)',
+    94: 'rgb(0, 0, 255)',
+    95: 'rgb(255, 0, 255)',
+    96: 'rgb(0, 255, 255)',
+    97: 'rgb(255, 255, 255)',
+    100: 'rgb(0, 0, 0)',
+    101: 'rgb(128, 0, 0)',
+    102: 'rgb(0, 128, 0)',
+    103: 'rgb(128, 128, 0)',
+    104: 'rgb(0, 0, 128)',
+    105: 'rgb(128, 0, 128)',
+    106: 'rgb(0, 128, 128)',
+    107: 'rgb(192, 192, 192)',
+} as Record<number, string>;
 
 export function findAnsi4Color(text: string): ColorRange[] {
     let match = runStrategy([ANSI_COLOR_REGEX, UNICODE_ANSI_REGEX], text);
@@ -83,9 +47,10 @@ export function findAnsi4Color(text: string): ColorRange[] {
         const ansiStr = match[0].toLowerCase();
         const start = match.index;
         const end = start + ansiStr.length;
+        const i = parseInt(match.groups!.i, 10);
 
         result.push({
-            color: ANSI_COLOR_MAP[ansiStr] || UNICODE_ANSI_COLOR_MAP[ansiStr],
+            color: ANSI_COLOR_MAP[i],
             start,
             end
         });
