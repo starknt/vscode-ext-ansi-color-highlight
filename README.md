@@ -1,4 +1,4 @@
-# <p align="center">[Ansi Color Highlight](https://github.com/naumovs/vscode-ext-color-ansi-highlight)</p>
+# <p align="center">[Ansi Color Highlight](https://github.com/SEVEN-1-bit/vscode-ext-color-ansi-highlight)</p>
 
 This extension styles ansi colors found in your document.
 
