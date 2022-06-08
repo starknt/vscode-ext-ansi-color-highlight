@@ -2,7 +2,7 @@
 	"name": "vscode-ext-ansi-color-highlight",
 	"displayName": "Ansi Color Highlight",
 	"description": "ansi color highlight",
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"license": "MIT",
 	"publisher": "Seven1bit",
 	"engines": {
