@@ -1,96 +1,95 @@
-import { ColorRange } from '../types';
-import { runStrategy } from './strategy';
+import { makeRGB } from "../color";
+import { ColorRange } from "../types";
+import { runStrategy } from "./strategy";
 
-const ANSI_COLOR_REGEX = /\\x1[b|B]\[\d+m/ig;
-const ANSI_XTERM_REGEX = /\\x1b\[38;(\d+;)+m/ig;
-const UNICODE_ANSI_REGEX = /\\u001[b|B]\[\d+m/ig;
+const ANSI_COLOR_REGEX = /\\x1b\[38;5;(?<i>\d+;?)(\d+;?)?m/ig;
+const UNICODE_ANSI_REGEX = /\\u001b\[38;5;(?<i>\d+;?)(\d+;?)?m/ig;
 
-const ANSI_COLOR_MAP = {
-    '\\x1b[30m': 'rgb(0, 0, 0)',
-    '\\x1b[31m': 'rgb(194,54,33)',
-    '\\x1b[32m': 'rgb(37,188,36)',
-    '\\x1b[33m': 'rgb(173,173,39)',
-    '\\x1b[34m': 'rgb(73,46,225)',
-    '\\x1b[35m': 'rgb(211,56,211)',
-    '\\x1b[36m': 'rgb(51,187,200)',
-    '\\x1b[37m': 'rgb(203,204,205)',
-    '\\x1b[90m': 'rgb(129,131,131)',
-    '\\x1b[91m': 'rgb(252,57,31)',
-    '\\x1b[92m': 'rgb(49,231,34)',
-    '\\x1b[93m': 'rgb(234,236,35)',
-    '\\x1b[94m': 'rgb(88,51,255)',
-    '\\x1b[95m': 'rgb(249,53,248)',
-    '\\x1b[96m': 'rgb(20,240,240)',
-    '\\x1b[97m': 'rgb(233,235,235)',
-    '\\x1b[40m': 'rgb(0, 0, 0)',
-    '\\x1b[41m': 'rgb(194,54,33)',
-    '\\x1b[42m': 'rgb(37,188,36)',
-    '\\x1b[43m': 'rgb(173,173,39)',
-    '\\x1b[44m': 'rgb(73,46,225)',
-    '\\x1b[45m': 'rgb(211,56,211)',
-    '\\x1b[46m': 'rgb(51,187,200)',
-    '\\x1b[47m': 'rgb(203,204,205)',
-    '\\x1b[100m': 'rgb(129,131,131)',
-    '\\x1b[101m': 'rgb(252,57,31)',
-    '\\x1b[102m': 'rgb(49,231,34)',
-    '\\x1b[103m': 'rgb(234,236,35)',
-    '\\x1b[104m': 'rgb(88,51,255)',
-    '\\x1b[105m': 'rgb(249,53,248)',
-    '\\x1b[106m': 'rgb(20,240,240)',
-    '\\x1b[107m': 'rgb(233,235,235)',
-} as Record<string | number, string>;
+const gap = [0, 95, 40, 40, 40, 40];
 
-const UNICODE_ANSI_COLOR_MAP = {
-    '\\u001b[30m': 'rgb(0, 0, 0)',
-    '\\u001b[31m': 'rgb(194,54,33)',
-    '\\u001b[32m': 'rgb(37,188,36)',
-    '\\u001b[33m': 'rgb(173,173,39)',
-    '\\u001b[34m': 'rgb(73,46,225)',
-    '\\u001b[35m': 'rgb(211,56,211)',
-    '\\u001b[36m': 'rgb(51,187,200)',
-    '\\u001b[37m': 'rgb(203,204,205)',
-    '\\u001b[90m': 'rgb(129,131,131)',
-    '\\u001b[91m': 'rgb(252,57,31)',
-    '\\u001b[92m': 'rgb(49,231,34)',
-    '\\u001b[93m': 'rgb(234,236,35)',
-    '\\u001b[94m': 'rgb(88,51,255)',
-    '\\u001b[95m': 'rgb(249,53,248)',
-    '\\u001b[96m': 'rgb(20,240,240)',
-    '\\u001b[97m': 'rgb(233,235,235)',
-    '\\u001b[40m': 'rgb(0, 0, 0)',
-    '\\u001b[41m': 'rgb(194,54,33)',
-    '\\u001b[42m': 'rgb(37,188,36)',
-    '\\u001b[43m': 'rgb(173,173,39)',
-    '\\u001b[44m': 'rgb(73,46,225)',
-    '\\u001b[45m': 'rgb(211,56,211)',
-    '\\u001b[46m': 'rgb(51,187,200)',
-    '\\u001b[47m': 'rgb(203,204,205)',
-    '\\u001b[100m': 'rgb(129,131,131)',
-    '\\u001b[101m': 'rgb(252,57,31)',
-    '\\u001b[102m': 'rgb(49,231,34)',
-    '\\u001b[103m': 'rgb(234,236,35)',
-    '\\u001b[104m': 'rgb(88,51,255)',
-    '\\u001b[105m': 'rgb(249,53,248)',
-    '\\u001b[106m': 'rgb(20,240,240)',
-    '\\u001b[107m': 'rgb(233,235,235)',
-} as Record<string | number, string>;
+const ANSI8_COLOR_MAP = {
+    0: 'rgb(0, 0, 0)',
+    1: 'rgb(128, 0, 0)',
+    2: 'rgb(0, 128, 0)',
+    3: 'rgb(128, 128, 0)',
+    4: 'rgb(0, 0, 128)',
+    5: 'rgb(128, 0, 128)',
+    6: 'rgb(0, 128, 128)',
+    7: 'rgb(192, 192, 192)',
+    8: 'rgb(128, 128, 128)',
+    9: 'rgb(255, 0, 0)',
+    10: 'rgb(0, 255, 0)',
+    11: 'rgb(255, 255, 0)',
+    12: 'rgb(0, 0, 255)',
+    13: 'rgb(255, 0, 255)',
+    14: 'rgb(0, 255, 255)',
+    15: 'rgb(255, 255, 255)',
+} as Record<number, string>;
+
+const generation16to232 = (map: Record<number, string>) => {
+    let gapIndex = 0;
+    let basic = 0;
+
+    let r = 0;
+    let g = 0;
+    let b = 0;
+
+    for(let i = 16; i < 232; i++, gapIndex++) {
+        if(gapIndex === gap.length) {
+            gapIndex = 0;
+            basic++;
+            if(basic === 3) {
+                basic = 0;
+            }
+        }
+
+        switch(basic) {
+            case 0:
+                map[i] = makeRGB(r,g, b + gap[gapIndex]);
+                break;
+            case 1:
+                map[i] = makeRGB(r, g + gap[gapIndex], b);
+                break;
+            case 2:
+                map[i] = makeRGB(r + gap[gapIndex], g, b);
+                break;
+            default:
+                break;
+        }
+    }
+};
+
+const generation232to256 = (map: Record<number, string>) => {
+    const basic = 8;
+
+    for(let i = 232; i < 256; i++) {
+        const color = basic + ((i - 232) * 10);
+
+        map[i] = makeRGB(color, color, color);
+    }
+};
+
+generation16to232(ANSI8_COLOR_MAP);
+generation232to256(ANSI8_COLOR_MAP);
 
 export function findAnsi8Color(text: string): ColorRange[] {
-    let match = runStrategy([ANSI_COLOR_REGEX, UNICODE_ANSI_REGEX], text);
     const result: ColorRange[] = [];
 
-    while(match !== null) {
+    let match: RegExpExecArray | null;
+
+    while((match = runStrategy([ANSI_COLOR_REGEX, UNICODE_ANSI_REGEX], text)) !== null) {
         const ansiStr = match[0].toLowerCase();
         const start = match.index;
         const end = start + ansiStr.length;
+        const i = parseInt(match.groups!.i, 10) % 256;
+
+        const color = ANSI8_COLOR_MAP[i];
 
         result.push({
-            color: ANSI_COLOR_MAP[ansiStr] || UNICODE_ANSI_COLOR_MAP[ansiStr],
+            color,
             start,
-            end
+            end,
         });
-
-        match = runStrategy([ANSI_COLOR_REGEX, UNICODE_ANSI_REGEX], text);
     }
 
     return result;

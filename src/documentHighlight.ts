@@ -1,5 +1,7 @@
 import * as vscode from 'vscode';
 import { DecorationMap } from './decoration-map';
+import { findAnsi24Color } from './strategies/ansi24';
+import { findAnsi4Color } from './strategies/ansi4';
 import { findAnsi8Color } from './strategies/ansi8';
 import { ColorRange } from './types';
 
@@ -22,7 +24,7 @@ export class DocumentHighlight {
     this.disposed = false;
 
     this.document = document;
-    this.strategies = [findAnsi8Color];
+    this.strategies = [findAnsi4Color, findAnsi8Color, findAnsi24Color];
 
     this.initialize();
   }
