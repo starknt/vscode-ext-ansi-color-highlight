@@ -4,7 +4,7 @@
 	"description": "ansi color highlight",
 	"version": "0.0.1",
 	"license": "MIT",
-	"publisher": "Seven",
+	"publisher": "Seven1bit",
 	"engines": {
 		"vscode": "^1.57.0"
 	},
@@ -20,7 +20,7 @@
 		}
 	},
 	"main": "./dist/extension.js",
-	"icon": "https://github.com/SEVEN-1-bit/vscode-ext-ansi-color-highlight/tree/main/images/preview.png",
+	"icon": "images/preview.png",
 	"repository": "https://github.com/SEVEN-1-bit/vscode-ext-ansi-color-highlight",
 	"contributes": {
 		"commands": []
