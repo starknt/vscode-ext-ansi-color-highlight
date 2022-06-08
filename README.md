@@ -1,4 +1,4 @@
-# <p align="center">[Ansi Color Highlight](https://github.com/SEVEN-1-bit/vscode-ext-color-ansi-highlight)</p>
+# <p align="center">[Ansi Color Highlight](https://github.com/SEVEN-1-bit/vscode-ext-ansi-color-highlight)</p>
 
 This extension styles ansi colors found in your document.
 
@@ -7,5 +7,3 @@ This extension styles ansi colors found in your document.
 In VSC press Ctrl+Shift+P (Cmd+Shift+P on Mac) then type ">ext install", hit enter, search "Ansi Color Highlight".
 
 Still confused? Click "Get Started" above.
-
-**Enjoy!**
