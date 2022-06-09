@@ -5,6 +5,13 @@
 	"version": "1.0.0",
 	"license": "MIT",
 	"publisher": "Seven1bit",
+	"keywords": [
+		"ansi",
+		"color",
+		"highlight",
+		"vscode",
+		"extension"
+	],
 	"engines": {
 		"vscode": "^1.57.0"
 	},
