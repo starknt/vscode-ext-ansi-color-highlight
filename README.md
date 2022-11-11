@@ -7,3 +7,6 @@ This extension styles ansi colors found in your document.
 In VSC press Ctrl+Shift+P (Cmd+Shift+P on Mac) then type ">ext install", hit enter, search "Ansi Color Highlight".
 
 Still confused? Click "Get Started" above.
+
+## Preview
+![preview image](./images/preview.png)

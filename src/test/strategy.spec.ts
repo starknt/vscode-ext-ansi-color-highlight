@@ -1,6 +1,5 @@
-import * as assert from 'assert';
+import { expect, suite, test } from 'vitest';
 import { findAnsi4Color } from '../strategies/ansi4';
-import { suite, test } from 'vitest';
 import { findAnsi8Color } from '../strategies/ansi8';
 import { findAnsi24Color } from '../strategies/ansi24';
 
@@ -11,31 +10,45 @@ suite('ANSI Strategy Test', () => {
 
 	test('Test ansi 4', () => {
 		const result1 = findAnsi4Color(color4TableString);
-		assert.equal(result1.length, 2);
-		assert.equal(result1[0].color, 'rgb(0, 0, 0)');
+		expect(result1.length).eq(2);
+		expect(result1[0].color).eq('rgb(0, 0, 0)');
 
 		const result2 = findAnsi4Color(color8TableString);
-		assert.equal(result2.length, 0);
+		expect(result2.length).eq(0);
 
 		const result3 = findAnsi4Color(color24TableString);
-		assert.equal(result3.length, 0);
+		expect(result3.length).eq(0);
 	});
 
 	test('Test ansi 8', () => {
 		const result1 = findAnsi8Color(color4TableString);
-		assert.equal(result1.length, 0);
+		expect(result1.length).eq(0);
 		const result2 = findAnsi8Color(color8TableString);
-		assert.equal(result2.length, 2);
+		expect(result2.length).eq(2);
 		const result3 = findAnsi8Color(color24TableString);
-		assert.equal(result3.length, 0);
+		expect(result3.length).eq(0);
 	});
 
 	test('Test ansi 24', () => {
 		const result1 = findAnsi24Color(color4TableString);
-		assert.equal(result1.length, 0);
+		expect(result1.length).eq(0);
 		const result2 = findAnsi24Color(color8TableString);
-		assert.equal(result2.length, 0);
+		expect(result2.length).eq(0);
 		const result3 = findAnsi24Color(color24TableString);
-		assert.equal(result3.length, 2);
+		expect(result3.length).eq(2);
+		expect(result3).toMatchInlineSnapshot(`
+			[
+			  {
+			    "color": "rgb(0, 0, 0)",
+			    "end": 38,
+			    "start": 22,
+			  },
+			  {
+			    "color": "rgb(0, 0, 1)",
+			    "end": 58,
+			    "start": 42,
+			  },
+			]
+		`);
 	});
 });

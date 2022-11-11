@@ -5,6 +5,14 @@ const ANSI_COLOR_REGEX = /\\x1b\[(?<i>\d+)m/ig;
 const UNICODE_ANSI_REGEX = /\\u001b\[(?<i>\d+)+m/ig;
 
 const ANSI_COLOR_MAP = {
+    0: '',
+    // bold
+    1: '',
+    // Italic
+    3: '',
+    // Underline
+    4: '',
+    
     30: 'rgb(0, 0, 0)',
     31: 'rgb(128, 0, 0)',
     32: 'rgb(0, 128, 0)',

@@ -13,6 +13,7 @@ export class DecorationMap {
       rules.color = getColorContrast(color);
       rules.border = `2px solid ${color}`;
       rules.borderRadius = '2px';
+      rules.fontWeight = `500`;
   
       this._map.set(color, vscode.window.createTextEditorDecorationType(rules));
       this._keys.push(color);
