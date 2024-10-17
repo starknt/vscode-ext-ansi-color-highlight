@@ -1,10 +1,16 @@
-# Change Log
+# ChangeLog
 
 # Release v0.0.1
-- ansi4 color
+
+- support ansi4 color
+
 # Release v1.0.0
-- ansi8 color
-- ansi24 color
+
+- support ansi8 color
+- support ansi24 color
 
 # Release v1.0.1
-- keywords
+
+# Release v1.0.2
+
+- enable unicode flags
