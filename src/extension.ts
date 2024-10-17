@@ -1,17 +1,17 @@
 import * as vscode from 'vscode';
 import { DocumentHighlight } from './documentHighlight';
 
-let instances:any[]	= [];
+let instances:any[] = [];
 
 export function activate(context: vscode.ExtensionContext) {
-	vscode.window.onDidChangeVisibleTextEditors(onOpenEditor, null, context.subscriptions);
+ vscode.window.onDidChangeVisibleTextEditors(onOpenEditor, null, context.subscriptions);
 
-	onOpenEditor(vscode.window.visibleTextEditors);
+ onOpenEditor(vscode.window.visibleTextEditors);
 }
 
 export function deactivate() {
-	instances.forEach((instance) => instance.dispose());
-  	instances = [];
+ instances.forEach((instance) => instance.dispose());
+   instances = [];
 }
 
 async function findOrCreateInstance(document: any) {
