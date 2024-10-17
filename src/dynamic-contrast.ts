@@ -9,58 +9,63 @@
 //                         rgba(255, 255, 255, 1)
 //                         blue, green, red
 // @return      string of the form #RRGGBB
-import * as webColors from 'color-name';
+import * as webColors from 'color-name'
 
 export function getColorContrast(color: string) {
-  const rgbExp = /^rgba?[\s+]?\(\s*([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\s*,\s*([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\s*,\s*([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\s*(?:,\s*([\d.]+)\s*)?\)/im,
-    hexExp = /^(?:#)|([a-fA-F0-9]{3}|[a-fA-F0-9]{6})$/igm;
-  let rgb = color.match(rgbExp),
-    hex: any = color.match(hexExp),
-    r, g, b;
+  const rgbExp = /^rgba?[\s+]?\(\s*([01]?\d{1,2}|2[0-4]\d|25[0-5])\s*,\s*([01]?\d{1,2}|2[0-4]\d|25[0-5])\s*,\s*([01]?\d{1,2}|2[0-4]\d|25[0-5])\s*(?:,\s*([\d.]+)\s*)?\)/im
+  const hexExp = /^#|([a-f0-9]{3}|[a-f0-9]{6})$/gim
+  let rgb = color.match(rgbExp)
+  let hex: any = color.match(hexExp)
+  let r; let g; let b
   if (rgb) {
-    r = parseInt(rgb[1], 10);
-    g = parseInt(rgb[2], 10);
-    b = parseInt(rgb[3], 10);
-  } else if (hex) {
+    r = Number.parseInt(rgb[1], 10)
+    g = Number.parseInt(rgb[2], 10)
+    b = Number.parseInt(rgb[3], 10)
+  }
+  else if (hex) {
     if (hex.length > 1) {
-      hex = hex[1];
-    } else {
-      hex = hex[0];
+      hex = hex[1]
     }
-    if (hex.length == 3) {
-      hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+    else {
+      hex = hex[0]
     }
-    r = parseInt(hex.substr(0, 2), 16);
-    g = parseInt(hex.substr(2, 2), 16);
-    b = parseInt(hex.substr(4, 2), 16);
-  } else {
-    // @ts-ignore
-    rgb = webColors[color.toLowerCase()];
+    if (hex.length === 3) {
+      hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2]
+    }
+    r = Number.parseInt(hex.substr(0, 2), 16)
+    g = Number.parseInt(hex.substr(2, 2), 16)
+    b = Number.parseInt(hex.substr(4, 2), 16)
+  }
+  else {
+    // @ts-expect-error Type 'undefined' is not assignable to type 'string'.
+    rgb = webColors[color.toLowerCase()]
     if (rgb) {
-      r = rgb[0];
-      g = rgb[1];
-      b = rgb[2];
-    } else {
-      return '#000000';
+      r = rgb[0]
+      g = rgb[1]
+      b = rgb[2]
+    }
+    else {
+      return '#000000'
     }
   }
   // The color with the maximum contrast ratio to our input color is guaranteed
   // to either be white or black, so we just check both and pick whichever has
   // a higher contrast ratio.
 
-  let luminance = relativeLuminance(+r, +g, +b);
+  const luminance = relativeLuminance(+r, +g, +b)
 
   // This is equivalent to `relativeLuminance(255, 255, 255)` (by definition).
-  let luminanceWhite = 1.0;
+  const luminanceWhite = 1.0
   // This is equivalent to `relativeLuminance(0, 0, 0)` (by definition).
-  let luminanceBlack = 0.0;
+  const luminanceBlack = 0.0
 
-  let contrastWhite = contrastRatio(luminance, luminanceWhite);
-  let contrastBlack = contrastRatio(luminance, luminanceBlack);
+  const contrastWhite = contrastRatio(luminance, luminanceWhite)
+  const contrastBlack = contrastRatio(luminance, luminanceBlack)
   if (contrastWhite > contrastBlack) {
-    return '#FFFFFF';
-  } else {
-    return '#000000';
+    return '#FFFFFF'
+  }
+  else {
+    return '#000000'
   }
 }
 
@@ -73,10 +78,10 @@ export function getColorContrast(color: string) {
  * Note that the order of the arguments does not matter. In other words, if `a`
  * and `b` are valid inputs, then `contrastRatio(a, b) === contrastRatio(b, a)`.
  *
- * @param l1 number  The relative luminance of the first color -- a number
+ * @param l1 number  The relative luminance of the first color -- a number
  *                   between 0.0 and 1.0 (inclusive), which should be produced
  *                   by the `relativeLuminance` function.
- * @param l2 number  The relative luminance of the second color -- a number
+ * @param l2 number  The relative luminance of the second color -- a number
  *                   between 0.0 and 1.0 (inclusive), which is expected to have
  *                   been produced by the `relativeLuminance` function.
  *
@@ -88,11 +93,46 @@ function contrastRatio(l1: number, l2: number) {
   // Note: the denominator of the contrast ratio must be the darker (e.g. lower
   // relative luminance) color.
   if (l2 < l1) {
-    return (0.05 + l1) / (0.05 + l2);
-  } else {
-    return (0.05 + l2) / (0.05 + l1);
+    return (0.05 + l1) / (0.05 + l2)
+  }
+  else {
+    return (0.05 + l2) / (0.05 + l1)
   }
 }
+
+/**
+ * Convert an 8-bit color component from sRGB space (the default web color
+ * space) into the linear RGB color space.
+ *
+ * This is a helper function for `relativeLuminance`, and at the moment isn't
+ * needed except as part of calling that function.
+ *
+ * @param c8 number  An 8-bit integer color channel in the sRGB color space. In
+ *                   other words, a number between 0 and 255 (inclusive).
+ *                   Anything outside this range will be clamped and truncated.
+ *
+ * @returns  number  The value of the channel in a linear RGB color space -- a
+ *                   number between 0.0 and 1.0, inclusive.
+ */
+const srgb8ToLinear = (function () {
+  // There are only 256 possible different input values (0 <= input <= 255),
+  // so we just use a lookup table, which to avoid repeating the (somewhat
+  // costly) computation 3 times for each input.
+  const srgbLookupTable = new Float64Array(256)
+  for (let i = 0; i < 256; ++i) {
+    const c = i / 255.0
+    srgbLookupTable[i] = (c <= 0.04045)
+      ? c / 12.92
+      : ((c + 0.055) / 1.055) ** 2.4
+  }
+
+  return function srgb8ToLinear(c8: number) {
+    // Input should be an integer between 0 and 255 already, but clamp if
+    // for some reason it is not.
+    const index = Math.min(Math.max(c8, 0), 255) & 0xFF
+    return srgbLookupTable[index]
+  }
+}())
 
 /**
  * Compute the relative luminance of a color, using the algorithm from WCAG 2.0
@@ -116,42 +156,8 @@ function contrastRatio(l1: number, l2: number) {
  *                   and 1.0 (inclusive).
  */
 function relativeLuminance(r8: number, g8: number, b8: number) {
-  const bigR = srgb8ToLinear(r8);
-  const bigG = srgb8ToLinear(g8);
-  const bigB = srgb8ToLinear(b8);
-  return 0.2126 * bigR + 0.7152 * bigG + 0.0722 * bigB;
+  const bigR = srgb8ToLinear(r8)
+  const bigG = srgb8ToLinear(g8)
+  const bigB = srgb8ToLinear(b8)
+  return 0.2126 * bigR + 0.7152 * bigG + 0.0722 * bigB
 }
-
-/**
- * Convert an 8-bit color component from sRGB space (the default web color
- * space) into the linear RGB color space.
- *
- * This is a helper function for `relativeLuminance`, and at the moment isn't
- * needed except as part of calling that function.
- *
- * @param c8 number  An 8-bit integer color channel in the sRGB color space. In
- *                   other words, a number between 0 and 255 (inclusive).
- *                   Anything outside this range will be clamped and truncated.
- *
- * @returns  number  The value of the channel in a linear RGB color space -- a
- *                   number between 0.0 and 1.0, inclusive.
- */
-const srgb8ToLinear = (function() {
-  // There are only 256 possible different input values (0 <= input <= 255),
-  // so we just use a lookup table, which to avoid repeating the (somewhat
-  // costly) computation 3 times for each input.
-  const srgbLookupTable = new Float64Array(256);
-  for (let i = 0; i < 256; ++i) {
-    const c = i / 255.0;
-    srgbLookupTable[i] = (c <= 0.04045)
-      ? c / 12.92
-      : Math.pow((c + 0.055) / 1.055, 2.4);
-  }
-
-  return function srgb8ToLinear(c8: number) {
-    // Input should be an integer between 0 and 255 already, but clamp if
-    // for some reason it is not.
-    const index = Math.min(Math.max(c8, 0), 255) & 0xff;
-    return srgbLookupTable[index];
-  };
-}());

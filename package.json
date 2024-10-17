@@ -1,59 +1,58 @@
 {
-	"name": "vscode-ext-ansi-color-highlight",
-	"displayName": "Ansi Color Highlight",
-	"description": "ansi color highlight",
-	"version": "1.0.1",
-	"license": "MIT",
-	"publisher": "Seven1bit",
-	"keywords": [
-		"ansi",
-		"color",
-		"highlight",
-		"vscode",
-		"extension"
-	],
-	"engines": {
-		"vscode": "^1.57.0"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"*"
-	],
-	"capabilities": {
-		"untrustedWorkspaces": {
-			"supported": true
-		}
-	},
-	"main": "./dist/extension.js",
-	"icon": "images/preview.png",
-	"repository": "https://github.com/SEVEN-1-bit/vscode-ext-ansi-color-highlight",
-	"contributes": {
-		"commands": []
-	},
-	"scripts": {
-		"vscode:prepublish": "yarn run package",
-		"compile": "webpack",
-		"watch": "webpack --watch",
-		"package": "webpack --mode production --devtool hidden-source-map",
-		"lint": "eslint src --ext ts",
-		"test": "vitest -u"
-	},
-	"devDependencies": {
-		"@types/color-name": "^1.1.1",
-		"@types/node": "16.x",
-		"@types/vscode": "^1.57.0",
-		"@typescript-eslint/eslint-plugin": "^5.27.0",
-		"@typescript-eslint/parser": "^5.27.0",
-		"eslint": "^8.16.0",
-		"ts-loader": "^9.3.0",
-		"typescript": "^4.7.2",
-		"vitest": "^0.14.1",
-		"webpack": "^5.72.1",
-		"webpack-cli": "^4.9.2"
-	},
-	"dependencies": {
-		"color-name": "^1.1.4"
-	}
+  "publisher": "Seven1bit",
+  "name": "vscode-ext-ansi-color-highlight",
+  "displayName": "Ansi Color Highlight",
+  "version": "1.0.1",
+  "description": "ansi color highlight",
+  "license": "MIT",
+  "repository": "https://github.com/starknt/vscode-ext-ansi-color-highlight",
+  "keywords": [
+    "ansi",
+    "color",
+    "highlight",
+    "vscode",
+    "extension"
+  ],
+  "categories": [
+    "Other"
+  ],
+  "main": "./dist/extension.js",
+  "icon": "images/preview.png",
+  "engines": {
+    "vscode": "^1.57.0"
+  },
+  "activationEvents": [
+    "*"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true
+    }
+  },
+  "contributes": {
+    "commands": []
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "lint": "eslint src --ext ts",
+    "test": "vitest -u"
+  },
+  "dependencies": {
+    "color-name": "^1.1.4"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^3.8.0",
+    "@types/color-name": "^1.1.1",
+    "@types/node": "22.7.6",
+    "@types/vscode": "^1.57.0",
+    "eslint": "9.0.0",
+    "ts-loader": "^9.3.0",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.3",
+    "webpack": "^5.72.1",
+    "webpack-cli": "^4.9.2"
+  }
 }

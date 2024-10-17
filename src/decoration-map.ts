@@ -1,35 +1,34 @@
-import * as vscode from 'vscode';
-import { getColorContrast } from './dynamic-contrast';
+import * as vscode from 'vscode'
+import { getColorContrast } from './dynamic-contrast'
 
 export class DecorationMap {
-  private _map = new Map<string, vscode.TextEditorDecorationType>();
-  private _keys: string[] = [];
+  private _map = new Map<string, vscode.TextEditorDecorationType>()
+  private _keys: string[] = []
 
   get(color: string) {
     if (!this._map.has(color)) {
-      let rules: vscode.DecorationRenderOptions = {};
+      const rules: vscode.DecorationRenderOptions = {}
 
-      rules.backgroundColor = color;
-      rules.color = getColorContrast(color);
-      rules.border = `2px solid ${color}`;
-      rules.borderRadius = '2px';
-      rules.fontWeight = `500`;
-  
-      this._map.set(color, vscode.window.createTextEditorDecorationType(rules));
-      this._keys.push(color);
+      rules.backgroundColor = color
+      rules.color = getColorContrast(color)
+      rules.border = `2px solid ${color}`
+      rules.borderRadius = '2px'
+      rules.fontWeight = `500`
+
+      this._map.set(color, vscode.window.createTextEditorDecorationType(rules))
+      this._keys.push(color)
     }
 
-    return this._map.get(color);
+    return this._map.get(color)
   }
 
-
   keys() {
-    return this._keys.slice();
+    return this._keys.slice()
   }
 
   dispose() {
     this._map.forEach((decoration) => {
-      decoration.dispose();
-    });
+      decoration.dispose()
+    })
   }
 }
